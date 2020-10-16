@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Question } from './question.entity';
 import { User } from '../users/user.entity'
 import { ByUserDTO } from './question.dto';
+import { ApiResponseModel } from 'src/shared/apiResponseModel/apiResponseModel';
 
 
 @Injectable()
@@ -15,11 +16,14 @@ export class QuestionService {
     private userRepository: Repository<User>
   ) {}
 
-  async findAll(): Promise<Question[]> {
-    return this.questionRepository.find();
+  async findAll(): Promise<ApiResponseModel<Question[]>> {
+    const allQuestions = await this.questionRepository.find();
+    return {
+      data: allQuestions
+    }
   }
 
-  async byUser(username: string): Promise<ByUserDTO> {
+  async byUser(username: string): Promise<ApiResponseModel<ByUserDTO>> {
     const user = await this.userRepository.findOne(username)
 
     if (!user) {
@@ -31,11 +35,13 @@ export class QuestionService {
 
     const questions = await this.questionRepository.find({ where: { user: { id: user.id }} })
     return {
-      questions
+      data: {
+        questions
+      }
     }
   }
 
-  async delete(id: string): Promise<string> {
+  async delete(id: string): Promise<ApiResponseModel<Question>> {
     const question = await this.questionRepository.findOne(id)
 
     if (!question) {
@@ -53,10 +59,12 @@ export class QuestionService {
       throw new Error(e)
     }
 
-    return 'ok'
+    return {
+      message: 'Success'
+    }
   }
 
-  async create(data: any): Promise<Question> {
+  async create(data: any): Promise<ApiResponseModel<Question>> {
     const userData = this.questionRepository.create({ ...data })
     const user = await this.userRepository.findOne({ id: data.userId })
     const response = await this.questionRepository.save({
@@ -64,6 +72,8 @@ export class QuestionService {
       user
     })
   
-    return response
+    return {
+      data: response
+    }
   }
 }

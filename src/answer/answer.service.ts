@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Question } from 'src/question/question.entity';
+import { ApiResponseModel } from 'src/shared/apiResponseModel/apiResponseModel';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { toAnswerDTO } from './answer.dto';
@@ -17,11 +18,13 @@ export class AnswerService {
     private questionRepository: Repository<Question>
   ) {}
 
-  findAll(): Promise<Answer[]> {
-    return this.answerRepository.find();
+  async findAll(): Promise<ApiResponseModel<Answer[]>> {
+    return {
+      data: await this.answerRepository.find()
+    }
   }
 
-  async toAnswer(data: toAnswerDTO): Promise<Answer> {
+  async toAnswer(data: toAnswerDTO): Promise<ApiResponseModel<Answer>> {
     const answerData = this.answerRepository.create({ ...data })
     const question = await this.questionRepository.findOne({ id: data.questionId })
     const user = await this.userRepository.findOne({ id: data.userId })
@@ -31,6 +34,8 @@ export class AnswerService {
       user
     })
     
-    return response
+    return {
+      data: response
+    }
   }
 }
