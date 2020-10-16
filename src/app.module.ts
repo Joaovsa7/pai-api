@@ -9,11 +9,11 @@ import { AnswerModule } from './answer/answer.module';
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'us-cdbr-east-02.cleardb.com',
       port: 3306,
-      username: 'adm',
-      password: '1234',
-      database: 'pai_bd',
+      username: 'b6f1e99b2e776e',
+      password: 'c947a246',
+      database: 'heroku_61ca4d6e4c7490d',
       entities: [
         __dirname + '/**/*.entity{.ts,.js}',
       ],
