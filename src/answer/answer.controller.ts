@@ -9,8 +9,8 @@ export class AnswerController {
   constructor(private service: AnswerService){}
 
   @Get()
-  async findAll(): Promise<ApiResponseModel<Answer[]>> {
-    return this.service.findAll()
+  async getAllAnswers(): Promise<ApiResponseModel<Answer[]>> {
+    return this.service.getAll()
   }
 
   @Post('/create')

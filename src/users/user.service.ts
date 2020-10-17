@@ -2,8 +2,9 @@ import { hash } from 'bcrypt';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
-import { UserExist } from './user.dto';
+import { RegisterDTO, UserExist } from './user.dto';
 import { User } from './user.entity';
+import { ApiResponseModel } from 'src/shared/apiResponseModel/apiResponseModel';
 
 @Injectable()
 export class UsersService {
@@ -12,11 +13,11 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) { }
 
-  findAll(): Promise<User[]> {
+  getAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
-  findByUsername(username: string): Promise<User> {
+  getByUsername(username: string): Promise<User> {
     return this.usersRepository.findOne({ username });
   }
 
@@ -34,22 +35,59 @@ export class UsersService {
   }
 
 
-  findByPayload({ username }: any): Promise<User | undefined> {
+  getByPayload({ username }: any): Promise<User | undefined> {
     return this.usersRepository.findOne({
       where: { username }
     });
   }
 
 
-  async createUser(data: User): Promise<User> {
-    const hashedPassword = await hash(data.password, 10)
-    const userAlreadyExist = await this.usernameExist({ username: data.username })
-    if (userAlreadyExist) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+  async createUser(data: User): Promise<ApiResponseModel<RegisterDTO>> {
+    try {
+      const hashedPassword = await hash(data.password, 10)
+      const userAlreadyExist = await this.usernameExist({ username: data.username })
+      if (userAlreadyExist) {
+        throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
+      }
+  
+      const userData = this.usersRepository.create({ ...data, password: hashedPassword })
+      const { username, email } = await this.usersRepository.save(userData)
+      return {
+        message: 'Success',
+        data: {
+          username,
+          email,
+        }
+      }
+    } catch (e) {
+      console.log({ e })
+      throw new HttpException(e.message, e.status)
+    }
+  }
+
+  async editUser(user: Partial<User>, id: number): Promise<ApiResponseModel<any>> {
+    try {
+      const userAlreadyExist = await this.usernameExist({ username: user.username })
+      if (userAlreadyExist) {
+        throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
+      }
+
+      const userData = {
+        ...user,
+        id
+      }
+
+      const newUser = await this.usersRepository.save({ ...userData })
+      return {
+        message: 'Sucess',
+        data: {
+          user: newUser
+        }
+      }
     }
 
-    const userData = this.usersRepository.create({ ...data, password: hashedPassword })
-    const response = await this.usersRepository.save(userData)
-    return response
+    catch (e) {
+      throw new HttpException(e.message, e.status)
+    }
   }
 }

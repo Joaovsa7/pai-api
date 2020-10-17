@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/user.service';
 import { User } from 'src/users/user.entity';
+import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -21,13 +22,13 @@ export class AuthService {
   private _createToken(user: Partial<User>): any {
     const accessToken = this.jwtService.sign({ username: user.username, id: user.id })
     return {
-        expiresIn: process.env.JWT_EXPIRES,
+        expiresIn: jwtConstants.expiresIn,
         accessToken,    
     };  
   }
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByUsername(username);
+    const user = await this.usersService.getByUsername(username);
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -45,5 +46,9 @@ export class AuthService {
       user: userData,
       ...token
     };
+  }
+
+  validatePayload(payload: any) {
+    return this.usersService.getByPayload(payload)
   }
 }

@@ -9,8 +9,8 @@ export class QuestionController {
   constructor(private service: QuestionService){}
 
   @Get()
-  findAll(): Promise<ApiResponseModel<Question[]>> {
-    return this.service.findAll()
+  getAll(): Promise<ApiResponseModel<Question[]>> {
+    return this.service.getAll()
   }
 
   @Get('/:username')

@@ -18,7 +18,7 @@ export class AnswerService {
     private questionRepository: Repository<Question>
   ) {}
 
-  async findAll(): Promise<ApiResponseModel<Answer[]>> {
+  async getAll(): Promise<ApiResponseModel<Answer[]>> {
     return {
       data: await this.answerRepository.find()
     }
