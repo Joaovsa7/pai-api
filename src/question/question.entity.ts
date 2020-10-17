@@ -12,6 +12,9 @@ export class Question {
   @Column()
   text: string;
 
+  @Column({ nullable: true })
+  likes: number;
+
   @Column({ type: 'timestamp' })
   created_at: string;
 

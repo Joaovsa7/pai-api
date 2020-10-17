@@ -16,7 +16,7 @@ export class QuestionService {
     private userRepository: Repository<User>
   ) {}
 
-  async findAll(): Promise<ApiResponseModel<Question[]>> {
+  async getAll(): Promise<ApiResponseModel<Question[]>> {
     const allQuestions = await this.questionRepository.find();
     return {
       data: allQuestions
@@ -45,10 +45,7 @@ export class QuestionService {
     const question = await this.questionRepository.findOne(id)
 
     if (!question) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Question not found',
-      }, HttpStatus.NOT_FOUND);
+      throw new HttpException('Question not found', HttpStatus.NOT_FOUND);
     }
 
     try {
@@ -56,7 +53,7 @@ export class QuestionService {
     }
 
     catch (e) {
-      throw new Error(e)
+      throw new HttpException(e.message, e.status)
     }
 
     return {
