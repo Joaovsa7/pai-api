@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserExist } from './user.dto';
 import { User } from './user.entity';
@@ -8,15 +8,9 @@ import { UsersService } from './user.service';
 export class UsersController {
   constructor(private usersService: UsersService){}
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  filterUsername(@Query() query): Promise<User[] | []> {
-    return this.usersService.getByUsernameQuery(query.username)
-  }
-
   @Post('/exist')
-  userExist(@Body() username: UserExist): Promise<boolean> {
-    return this.usersService.usernameExist(username)
+  userExist(@Body() params: UserExist): Promise<boolean> {
+    return this.usersService.userExist(params)
   }
 
   @Post('/create')

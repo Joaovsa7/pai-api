@@ -1,5 +1,6 @@
 export interface UserExist {
   username: string
+  email?: string
 }
 
 export interface RegisterDTO {
