@@ -79,7 +79,7 @@ export class UsersService {
 
       const newUser = await this.usersRepository.save({ ...userData })
       return {
-        message: 'Sucess',
+        message: 'Success',
         data: {
           user: newUser
         }
