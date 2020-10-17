@@ -29,6 +29,13 @@ export class UsersService {
     return this.usersRepository.findOne({ email })
   }
 
+  async _throwExceptionIfUsernameExist(username: string) {
+    const userAlreadyExist = await this.usernameExist({ username })
+    if (userAlreadyExist) {
+      throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async usernameExist({ username }: UserExist): Promise<boolean> {
     const hasUser = await this.usersRepository.findOne({ username })
     return !!hasUser
@@ -44,12 +51,9 @@ export class UsersService {
 
   async createUser(data: User): Promise<ApiResponseModel<RegisterDTO>> {
     try {
+      await this._throwExceptionIfUsernameExist(data.username)
+      
       const hashedPassword = await hash(data.password, 10)
-      const userAlreadyExist = await this.usernameExist({ username: data.username })
-      if (userAlreadyExist) {
-        throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
-      }
-  
       const userData = this.usersRepository.create({ ...data, password: hashedPassword })
       const { username, email } = await this.usersRepository.save(userData)
       return {
@@ -67,10 +71,7 @@ export class UsersService {
 
   async editUser(user: Partial<User>, id: number): Promise<ApiResponseModel<any>> {
     try {
-      const userAlreadyExist = await this.usernameExist({ username: user.username })
-      if (userAlreadyExist) {
-        throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
-      }
+      await this._throwExceptionIfUsernameExist(user.username)
 
       const userData = {
         ...user,
