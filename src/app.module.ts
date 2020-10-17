@@ -4,16 +4,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { QuestionModule } from './question/question.module';
 import { AnswerModule } from './answer/answer.module';
+import { AuthModule } from './auth/auth.module';
+import { AppController } from './app.controller';
+import { UsersService } from './users/user.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'us-cdbr-east-02.cleardb.com',
+      host: process.env.TYPEORM_HOST,
       port: 3306,
-      username: 'b6f1e99b2e776e',
-      password: 'c947a246',
-      database: 'heroku_61ca4d6e4c7490d',
+      username: process.env.TYPEORM_USER,
+      password: process.env.TYPEORM_PASSWORD,
+      database: process.env.TYPEORM_DB,
       entities: [
         __dirname + '/**/*.entity{.ts,.js}',
       ],
@@ -22,8 +26,9 @@ import { AnswerModule } from './answer/answer.module';
     UsersModule,
     QuestionModule,
     AnswerModule,
+    AuthModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [UsersService],
 })
 export class AppModule {}

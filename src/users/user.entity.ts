@@ -6,13 +6,13 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @OneToMany(() => Question, question => question)
@@ -27,6 +27,9 @@ export class User {
   @Column({ nullable: true })
   bio: string;
   
+  @Column({ type: 'char', length: '15', nullable: true })
+  gender: string;
+
   @Column()
   born_date: string;
 
