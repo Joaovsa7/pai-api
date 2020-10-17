@@ -24,6 +24,10 @@ export class UsersService {
   remove(id: string): Promise<DeleteResult> {
     return this.usersRepository.delete(id);
   }
+
+  getByUsername(username: string): Promise<User[]> {
+    return this.usersRepository.find({ username })
+  }
   
   getByUsernameQuery(username: string): Promise<User[]> {
     return this.usersRepository.find({ where: { username: Like(`%${username}%`)}});
