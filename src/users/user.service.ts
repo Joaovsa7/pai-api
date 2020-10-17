@@ -53,6 +53,10 @@ export class UsersService {
     try {
       await this._throwExceptionIfUsernameExist(data.username)
       
+      if (!data.password) {
+        throw new HttpException('You should to pass a user password', HttpStatus.BAD_REQUEST)
+      }
+
       const hashedPassword = await hash(data.password, 10)
       const userData = this.usersRepository.create({ ...data, password: hashedPassword })
       const { username, email } = await this.usersRepository.save(userData)
