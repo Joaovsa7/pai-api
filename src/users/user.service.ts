@@ -1,7 +1,7 @@
 import { hash } from 'bcrypt';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Like, Repository } from 'typeorm';
 import { RegisterDTO, UserExist } from './user.dto';
 import { User } from './user.entity';
 import { ApiResponseModel } from 'src/shared/apiResponseModel/apiResponseModel';
@@ -13,8 +13,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) { }
 
-  getAll(): Promise<User[]> {
-    return this.usersRepository.find();
+  getByUsernameQuery(username: string): Promise<User[]> {
+    return this.usersRepository.find({ where: { username: Like(`%${username}%`)}});
   }
 
   getByUsername(username: string): Promise<User> {
