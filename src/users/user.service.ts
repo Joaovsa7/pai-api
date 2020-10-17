@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
 import { ApiResponseModel } from 'src/shared/apiResponseModel/apiResponseModel';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Like, Repository } from 'typeorm';
 import { RegisterDTO, UserExist } from './user.dto';
 import { User } from './user.entity';
 
@@ -23,6 +23,10 @@ export class UsersService {
 
   remove(id: string): Promise<DeleteResult> {
     return this.usersRepository.delete(id);
+  }
+  
+  getByUsernameQuery(username: string): Promise<User[]> {
+    return this.usersRepository.find({ where: { username: Like(`%${username}%`)}});
   }
 
   async getByEmail(email: string): Promise<User> {
