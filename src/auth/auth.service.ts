@@ -20,7 +20,7 @@ export class AuthService {
   }
 
   private _createToken(user: Partial<User>): any {
-    const accessToken = this.jwtService.sign({ username: user.username, id: user.id })
+    const accessToken = this.jwtService.sign({ username: user.email, id: user.id })
     return {
         expiresIn: jwtConstants.expiresIn,
         accessToken,    
