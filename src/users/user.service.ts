@@ -40,7 +40,7 @@ export class UsersService {
   async _throwExceptionIfUsernameExist(username: string) {
     const userAlreadyExist = await this.userExist({ username })
     if (userAlreadyExist) {
-      throw new HttpException('Userna me already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -60,7 +60,7 @@ export class UsersService {
   async createUser(data: User): Promise<ApiResponseModel<RegisterDTO>> {
     try {
       await this._throwExceptionIfUsernameExist(data.username)
-      
+        console.log({ data })
       if (!data.password) {
         throw new HttpException('You should to pass a user password', HttpStatus.BAD_REQUEST)
       }

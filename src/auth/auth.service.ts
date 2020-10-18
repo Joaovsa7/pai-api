@@ -27,11 +27,11 @@ export class AuthService {
     };  
   }
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.getByUsername(username);
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.usersService.getByEmail(email);
 
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Wrong credentials provided', HttpStatus.NOT_FOUND);
     }
 
     const hashedPassword = await bcrypt.hash(pass, 10);
@@ -40,7 +40,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const userData = await this.validateUser(user.username, user.password)
+    const userData = await this.validateUser(user.email, user.password)
     const token = await this._createToken(userData)
     return {
       user: userData,

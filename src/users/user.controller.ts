@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards, Query, HttpCode } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserExist } from './user.dto';
 import { User } from './user.entity';
@@ -14,6 +14,7 @@ export class UsersController {
     return this.usersService.getByUsernameQuery(query.username)
   }
 
+  @HttpCode(200)
   @Post('/create')
   createUser(@Body() userData: User) {
     return this.usersService.createUser(userData)
