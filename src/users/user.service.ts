@@ -66,10 +66,11 @@ export class UsersService {
 
       const hashedPassword = await hash(data.password, 10)
       const userData = this.usersRepository.create({ ...data, password: hashedPassword })
-      const { username, email } = await this.usersRepository.save(userData)
+      const { username, email, id } = await this.usersRepository.save(userData)
       return {
         username,
         email,
+        id
       }
     } catch (e) {
       console.log({ e })
