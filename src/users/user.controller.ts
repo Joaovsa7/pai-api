@@ -16,8 +16,12 @@ export class UsersController {
 
   @HttpCode(200)
   @Post('/create')
-  createUser(@Body() userData: User) {
-    return this.usersService.createUser(userData)
+  async createUser(@Body() userData: User) {
+    const userCreated = await this.usersService.createUser(userData)
+    return {
+      message: `User: ${userData.username} was created with success`,
+      ...userCreated
+    }
   }
 
   @UseGuards(JwtAuthGuard)

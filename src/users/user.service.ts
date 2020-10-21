@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
-import { ApiResponseModel } from 'src/shared/apiResponseModel/apiResponseModel';
 import { DeleteResult, Like, Repository } from 'typeorm';
 import { RegisterDTO, UserExist } from './user.dto';
 import { User } from './user.entity';
@@ -11,7 +10,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
@@ -28,9 +27,9 @@ export class UsersService {
   getByUsername(username: string): Promise<User[]> {
     return this.usersRepository.find({ username })
   }
-  
+
   getByUsernameQuery(username: string): Promise<User[]> {
-    return this.usersRepository.find({ where: { username: Like(`%${username}%`)}});
+    return this.usersRepository.find({ where: { username: Like(`%${username}%`) } });
   }
 
   async getByEmail(email: string): Promise<User> {
@@ -57,10 +56,10 @@ export class UsersService {
   }
 
 
-  async createUser(data: User): Promise<ApiResponseModel<RegisterDTO>> {
+  async createUser(data: User): Promise<RegisterDTO> {
     try {
       await this._throwExceptionIfUsernameExist(data.username)
-        console.log({ data })
+      console.log({ data })
       if (!data.password) {
         throw new HttpException('You should to pass a user password', HttpStatus.BAD_REQUEST)
       }
@@ -69,11 +68,8 @@ export class UsersService {
       const userData = this.usersRepository.create({ ...data, password: hashedPassword })
       const { username, email } = await this.usersRepository.save(userData)
       return {
-        message: 'Success',
-        data: {
-          username,
-          email,
-        }
+        username,
+        email,
       }
     } catch (e) {
       console.log({ e })
@@ -81,7 +77,7 @@ export class UsersService {
     }
   }
 
-  async editUser(user: Partial<User>, id: number): Promise<ApiResponseModel<any>> {
+  async editUser(user: Partial<User>, id: number): Promise<User> {
     try {
       await this._throwExceptionIfUsernameExist(user.username)
 
@@ -91,12 +87,8 @@ export class UsersService {
       }
 
       const newUser = await this.usersRepository.save({ ...userData })
-      return {
-        message: 'Success',
-        data: {
-          user: newUser
-        }
-      }
+      return newUser
+
     }
 
     catch (e) {
