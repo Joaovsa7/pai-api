@@ -1,13 +1,17 @@
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/user.service';
 import { User } from 'src/users/user.entity';
 import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+  constructor(
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
+    private jwtService: JwtService
+  ) { }
 
   private async validatePassword(hashedPassword: string, password: string) {
     const isPasswordMatching = await bcrypt.compare(
@@ -19,12 +23,12 @@ export class AuthService {
     }
   }
 
-  private _createToken(user: Partial<User>): any {
+  public createToken(user: Partial<User>): any {
     const accessToken = this.jwtService.sign({ username: user.email, id: user.id })
     return {
-        expiresIn: jwtConstants.expiresIn,
-        accessToken,    
-    };  
+      expiresIn: jwtConstants.expiresIn,
+      accessToken,
+    };
   }
 
   async validateUser(email: string, pass: string): Promise<any> {
@@ -41,7 +45,7 @@ export class AuthService {
 
   async login(user: any) {
     const userData = await this.validateUser(user.email, user.password)
-    const token = await this._createToken(userData)
+    const token = await this.createToken(userData)
     return {
       user: userData,
       ...token

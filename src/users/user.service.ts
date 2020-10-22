@@ -1,6 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
+import { AuthService } from 'src/auth/auth.service';
 import { DeleteResult, Like, Repository } from 'typeorm';
 import { RegisterDTO, UserExist } from './user.dto';
 import { User } from './user.entity';
@@ -10,6 +11,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
   ) { }
 
   findAll(): Promise<User[]> {
@@ -67,10 +70,12 @@ export class UsersService {
       const hashedPassword = await hash(data.password, 10)
       const userData = this.usersRepository.create({ ...data, password: hashedPassword })
       const { username, email, id } = await this.usersRepository.save(userData)
+      const token = await this.authService.createToken({ username, email })
       return {
         username,
         email,
-        id
+        id,
+        ...token
       }
     } catch (e) {
       console.log({ e })

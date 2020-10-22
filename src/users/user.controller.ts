@@ -20,7 +20,7 @@ export class UsersController {
     const userCreated = await this.usersService.createUser(userData)
     return {
       message: `User: ${userData.username} was created with success`,
-      ...userCreated
+      ...userCreated,
     }
   }
 
