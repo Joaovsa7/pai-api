@@ -62,7 +62,6 @@ export class UsersService {
   async createUser(data: User): Promise<RegisterDTO> {
     try {
       await this._throwExceptionIfUsernameExist(data.username)
-      console.log({ data })
       if (!data.password) {
         throw new HttpException('You should to pass a user password', HttpStatus.BAD_REQUEST)
       }
