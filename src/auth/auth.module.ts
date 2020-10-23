@@ -7,6 +7,8 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { jwtConstants } from './constants';
+import { QuestionModule } from 'src/question/question.module';
+import { QuestionService } from 'src/question/question.service';
 
 @Module({
   imports: [
@@ -16,8 +18,9 @@ import { jwtConstants } from './constants';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: jwtConstants.expiresIn },
     }),
+    forwardRef(() => QuestionModule)
   ],
-  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, UsersService, QuestionService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule { }

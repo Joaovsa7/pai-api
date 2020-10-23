@@ -2,8 +2,9 @@ import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nest
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
 import { AuthService } from 'src/auth/auth.service';
+import { QuestionService } from 'src/question/question.service';
 import { DeleteResult, Like, Repository } from 'typeorm';
-import { RegisterDTO, UserExist } from './user.dto';
+import { RegisterDTO, UserExist, UserProfileDTO } from './user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -13,6 +14,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+    @Inject(forwardRef(() => QuestionService))
+    private readonly questionsService: QuestionService
   ) { }
 
   findAll(): Promise<User[]> {
@@ -25,6 +28,26 @@ export class UsersService {
 
   remove(id: string): Promise<DeleteResult> {
     return this.usersRepository.delete(id);
+  }
+
+  async getProfile(username: string): Promise<UserProfileDTO<User>> {
+    try {
+      const [user]: User[] = await this.getByUsername(username);
+      
+      if (!user?.username) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+  
+      const questions = await this.questionsService.byUser(user.username);
+      return {
+        user,
+        questions,
+        receivedQuestions: questions.length,
+        answeredQuestions: 0,
+      }
+    } catch (e) {
+      throw new HttpException(e.message, e.status)
+    }
   }
 
   getByUsername(username: string): Promise<User[]> {

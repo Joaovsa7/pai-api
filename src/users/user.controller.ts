@@ -7,9 +7,14 @@ import { UsersService } from './user.service';
 @Controller('user')
 export class UsersController {
   constructor(private usersService: UsersService){}
+  
+  @Get('/profile/:username')
+  getProfile(@Param() params) {
+    return this.usersService.getProfile(params.username)
+  }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('/filter')
   filterUsername(@Query() query): Promise<User[] | []> {
     return this.usersService.getByUsernameQuery(query.username)
   }

@@ -13,8 +13,8 @@ export class QuestionController {
   }
 
   @Get('/:username')
-  getByUser(@Param() params): Promise<ByUserDTO> {
-    return this.service.byUser(params)
+  getByUser(@Param() params): Promise<Question[]> {
+    return this.service.byUser(params.username)
   }
 
 
