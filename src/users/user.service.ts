@@ -39,6 +39,7 @@ export class UsersService {
       }
   
       const questions = await this.questionsService.byUser(user.username);
+      user.password = null;
       return {
         user,
         questions,
