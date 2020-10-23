@@ -90,7 +90,7 @@ export class UsersService {
       }
 
       const hashedPassword = await hash(data.password, 10)
-      const userData = this.usersRepository.create({ ...data, password: hashedPassword })
+      const userData = this.usersRepository.create({ ...data, name: data.username, password: hashedPassword })
       const { username, email, id } = await this.usersRepository.save(userData)
       const token = await this.authService.createToken({ username, email })
       return {
