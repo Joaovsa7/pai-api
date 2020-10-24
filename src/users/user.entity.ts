@@ -30,9 +30,6 @@ export class User {
   @Column({ type: 'char', length: '15', nullable: true })
   gender: string;
 
-  @Column()
-  born_date: string;
-
   @Column({ nullable: true })
   social_networks: string;
 

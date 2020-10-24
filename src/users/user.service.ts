@@ -39,12 +39,13 @@ export class UsersService {
       }
   
       const questions = await this.questionsService.byUser(user.username);
+      const answeredQuestions = questions.filter(({ answer }) => answer.length).length;
       user.password = null;
       return {
         user,
         questions,
         receivedQuestions: questions.length,
-        answeredQuestions: 0,
+        answeredQuestions,
       }
     } catch (e) {
       throw new HttpException(e.message, e.status)

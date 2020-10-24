@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getManager, IsNull, Not, Repository } from 'typeorm';
 import { Question } from './question.entity';
 import { User } from '../users/user.entity'
 import { Answer } from '../answer/answer.entity';
@@ -30,16 +30,21 @@ export class QuestionService {
           error: 'User not found',
         }, HttpStatus.NOT_FOUND);
       }
+
+      const questions = await getManager()
+        .createQueryBuilder(Question, 'Question')
+        .where("userId = :id", { id: user.id })
+        .andWhere('answerId is not null')
+        .getMany();
   
-      const questions = await this.questionRepository.find({ where: { user: { id: user.id } }})
       const questionsWithAnswers = await Promise.all(questions.map(async (question) => {
-        const answers: any = await this.answerRepository.find({ where: { question: { id: question.id }}})
+        const answers: any = await this.answerRepository.find({ where: { question: { id: question.id } } })
         return {
           ...question,
           answer: answers
         }
       }))
-  
+
       return questionsWithAnswers
     } catch (e) {
       console.log({ e })
@@ -68,15 +73,16 @@ export class QuestionService {
   }
 
   async create(data: any): Promise<Question> {
+    console.log({ data })
     const user = await this.userRepository.findOne({ id: data.userId })
-    
+
     if (!user) {
       throw new HttpException({
         status: HttpStatus.NOT_FOUND,
         error: 'User not found',
       }, HttpStatus.NOT_FOUND);
     }
-    
+
     const questionData = this.questionRepository.create({ ...data })
     const response = await this.questionRepository.save({
       ...questionData,

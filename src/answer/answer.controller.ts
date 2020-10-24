@@ -13,7 +13,7 @@ export class AnswerController {
   }
 
   @Post('/create')
-  submitAnswer(@Body() questionData: toAnswerDTO): Promise<Answer> {
+  submitAnswer(@Body() questionData: toAnswerDTO) {
     return this.service.toAnswer(questionData)
   }
 }

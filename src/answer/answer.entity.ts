@@ -13,7 +13,7 @@ export class Answer {
   @ManyToOne(() => User, user => user.id)
   user: User;
 
-  @Column()
+  @Column({ nullable: false })
   text: string;
 
   @Column({ type: 'timestamp' })

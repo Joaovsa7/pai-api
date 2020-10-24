@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Post, Param } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { Question } from './question.entity';
-import { ByUserDTO } from './question.dto';
 
 @Controller('questions')
 export class QuestionController {
