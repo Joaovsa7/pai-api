@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.getByEmail(email);
+    const user = await this.usersService.validateLogin(email, pass);
 
     if (!user) {
       throw new HttpException('Wrong credentials provided', HttpStatus.NOT_FOUND);
@@ -46,6 +46,7 @@ export class AuthService {
   async login(user: any) {
     const userData = await this.validateUser(user.email, user.password)
     const token = await this.createToken(userData)
+    user.password = null;
     return {
       user: userData,
       ...token

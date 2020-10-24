@@ -59,6 +59,10 @@ export class UsersService {
     return this.usersRepository.find({ where: { username: Like(`%${username}%`) } });
   }
 
+  async validateLogin(email: string, password: string) {
+    return this.usersRepository.find({ where: { email, password } });
+  }
+
   async getByEmail(email: string): Promise<User> {
     return this.usersRepository.findOne({ email })
   }
