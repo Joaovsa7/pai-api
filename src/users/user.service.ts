@@ -39,7 +39,7 @@ export class UsersService {
       }
   
       const questions = await this.questionsService.byUser(user.username);
-      const answeredQuestions = questions.filter(({ answer }) => answer.length).length;
+      const answeredQuestions = questions.filter(({ answer }) => Boolean(answer)).length;
       user.password = null;
       return {
         user,

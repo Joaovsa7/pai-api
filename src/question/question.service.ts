@@ -38,7 +38,7 @@ export class QuestionService {
         .getMany();
   
       const questionsWithAnswers = await Promise.all(questions.map(async (question) => {
-        const answers: any = await this.answerRepository.find({ where: { question: { id: question.id } } })
+        const [answers]: any = await this.answerRepository.find({ where: { question: { id: question.id } } }) || []
         return {
           ...question,
           answer: answers
