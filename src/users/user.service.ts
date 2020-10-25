@@ -2,6 +2,7 @@ import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nest
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
 import { AuthService } from 'src/auth/auth.service';
+import { Question } from 'src/question/question.entity';
 import { QuestionService } from 'src/question/question.service';
 import { DeleteResult, Like, Repository } from 'typeorm';
 import { RegisterDTO, UserExist, UserProfileDTO } from './user.dto';
@@ -38,7 +39,7 @@ export class UsersService {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
   
-      const questions = await this.questionsService.byUser(user.username);
+      const questions: Question[] = await this.questionsService.byUser(user.username);
       const answeredQuestions = questions.filter(({ answer }) => Boolean(answer)).length;
       user.password = null;
       return {
@@ -58,10 +59,6 @@ export class UsersService {
 
   getByUsernameQuery(username: string): Promise<User[]> {
     return this.usersRepository.find({ where: { username: Like(`%${username}%`) } });
-  }
-
-  async validateLogin(email: string, password: string) {
-    return this.usersRepository.find({ where: { email, password } });
   }
 
   async getByEmail(email: string): Promise<User> {

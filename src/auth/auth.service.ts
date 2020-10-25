@@ -18,9 +18,12 @@ export class AuthService {
       password,
       hashedPassword
     );
-    if (!isPasswordMatching) {
+  
+    if (isPasswordMatching === false) {
+      console.log({ isPasswordMatching, password, hashedPassword })
       throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
     }
+    return;
   }
 
   public createToken(user: Partial<User>): any {
@@ -32,23 +35,21 @@ export class AuthService {
   }
 
   async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.validateLogin(email, pass);
+    const user = await this.usersService.getByEmail(email);
 
     if (!user) {
       throw new HttpException('Wrong credentials provided', HttpStatus.NOT_FOUND);
     }
 
-    const hashedPassword = await bcrypt.hash(pass, 10);
-    await this.validatePassword(hashedPassword, pass)
+    await this.validatePassword(user.password, pass)
     return user;
   }
 
   async login(user: any) {
-    const userData = await this.validateUser(user.email, user.password)
-    const token = await this.createToken(userData)
+    const token = await this.createToken(user)
     user.password = null;
     return {
-      user: userData,
+      user,
       ...token
     };
   }

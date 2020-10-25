@@ -20,7 +20,7 @@ export class QuestionService {
     return this.questionRepository.find();
   }
 
-  async byUser(username: string) {
+  async byUser(username: string): Promise<Question[]> {
     try {
       const [user] = await this.userRepository.find({ username })
 
