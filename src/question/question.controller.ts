@@ -9,12 +9,12 @@ export class QuestionController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/:username')
-  byUser(): Promise<Question[]> {
-    return this.service.getAll()
+  byUser(@Param() params): Promise<Question[]> {
+    return this.service.byUser(params.username)
   }
 
   @Get('/profile/:username')
-  getByUser(@Param() params): Promise<Question[]> {
+  getForProfile(@Param() params): Promise<Question[]> {
     return this.service.byUserForProfile(params.username)
   }
 
