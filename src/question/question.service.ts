@@ -16,11 +16,11 @@ export class QuestionService {
     private answerRepository: Repository<Answer>
   ) { }
 
-  async getAll(): Promise<Question[]> {
-    return this.questionRepository.find();
+  async byUser(username: string): Promise<Question[]> {
+    return this.questionRepository.find({ where: { user: { username }}});
   }
 
-  async byUser(username: string): Promise<Question[]> {
+  async byUserForProfile(username: string): Promise<Question[]> {
     try {
       const [user] = await this.userRepository.find({ username })
 
@@ -73,7 +73,6 @@ export class QuestionService {
   }
 
   async create(data: any): Promise<Question> {
-    console.log({ data })
     const user = await this.userRepository.findOne({ id: data.userId })
 
     if (!user) {
@@ -86,7 +85,9 @@ export class QuestionService {
     const questionData = this.questionRepository.create({ ...data })
     const response = await this.questionRepository.save({
       ...questionData,
-      user
+      user: {
+        id: user.id
+      }
     })
 
     return response

@@ -1,22 +1,25 @@
-import { Body, Controller, Get, Post, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, UseGuards } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { Question } from './question.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('questions')
 export class QuestionController {
   constructor(private service: QuestionService){}
 
-  @Get()
-  getAll(): Promise<Question[]> {
+  @UseGuards(JwtAuthGuard)
+  @Get('/:username')
+  byUser(): Promise<Question[]> {
     return this.service.getAll()
   }
 
-  @Get('/:username')
+  @Get('/profile/:username')
   getByUser(@Param() params): Promise<Question[]> {
-    return this.service.byUser(params.username)
+    return this.service.byUserForProfile(params.username)
   }
 
 
+  @UseGuards(JwtAuthGuard)
   @Post('/delete/:id')
   deleteQuestion(@Param() params): Promise<Question> {
     return this.service.delete(params.id)

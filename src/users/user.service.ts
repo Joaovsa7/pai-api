@@ -39,7 +39,7 @@ export class UsersService {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
   
-      const questions: Question[] = await this.questionsService.byUser(user.username);
+      const questions: Question[] = await this.questionsService.byUserForProfile(user.username);
       const answeredQuestions = questions.filter(({ answer }) => Boolean(answer)).length;
       user.password = null;
       return {

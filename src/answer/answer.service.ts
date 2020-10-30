@@ -36,12 +36,14 @@ export class AnswerService {
         throw new HttpException('Question not found', HttpStatus.NOT_FOUND);
       }
   
-
-      
       const answerResponse = await this.answerRepository.save({
         ...answerData,
-        questionId: question.id,
-        userId: user.id
+        question: { 
+          id: question.id
+        },
+        user: {
+          id: user.id
+        }
       })
 
       await this.questionRepository.update(question.id, { answer: { id: answerResponse.id }})
