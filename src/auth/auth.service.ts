@@ -20,14 +20,13 @@ export class AuthService {
     );
   
     if (isPasswordMatching === false) {
-      console.log({ isPasswordMatching, password, hashedPassword })
       throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
     }
     return;
   }
 
   public createToken(user: Partial<User>): any {
-    const accessToken = this.jwtService.sign({ username: user.email, id: user.id })
+    const accessToken = this.jwtService.sign({ username: user.username, id: user.id })
     return {
       expiresIn: jwtConstants.expiresIn,
       accessToken,

@@ -17,7 +17,16 @@ export class QuestionService {
   ) { }
 
   async byUser(username: string): Promise<Question[]> {
-    return this.questionRepository.find({ where: { user: { username }}});
+    const [user] = await this.userRepository.find({ username })
+
+    if (!user) {
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: 'User not found',
+      }, HttpStatus.NOT_FOUND);
+    }
+
+    return this.questionRepository.find({ where: { user: { id: user.id }, answer: null }});
   }
 
   async byUserForProfile(username: string): Promise<Question[]> {
