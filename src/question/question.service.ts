@@ -26,7 +26,7 @@ export class QuestionService {
       }, HttpStatus.NOT_FOUND);
     }
 
-    return this.questionRepository.find({ where: { user: { id: user.id }, answer: null }});
+    return this.questionRepository.find({ where: { user: { id: user.id }, answer: null }, order: { created_at: 'DESC' }});
   }
 
   async byUserForProfile(username: string): Promise<Question[]> {
