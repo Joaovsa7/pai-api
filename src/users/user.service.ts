@@ -65,6 +65,10 @@ export class UsersService {
     return this.usersRepository.findOne({ email })
   }
 
+  async getByUserId(id: number): Promise<User> {
+    return this.usersRepository.findOne({ id })
+  }
+
   async _throwExceptionIfUsernameExist(username: string) {
     const userAlreadyExist = await this.userExist({ username })
     if (userAlreadyExist) {
@@ -110,8 +114,11 @@ export class UsersService {
 
   async editUser(user: Partial<User>, id: number): Promise<User> {
     try {
-      await this._throwExceptionIfUsernameExist(user.username)
-
+      const currentUser = this.usersRepository.findOne(id)
+      if (!currentUser) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+  
       const userData = {
         ...user,
         id
@@ -119,7 +126,6 @@ export class UsersService {
 
       const newUser = await this.usersRepository.save({ ...userData })
       return newUser
-
     }
 
     catch (e) {

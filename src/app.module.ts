@@ -22,7 +22,7 @@ import { QuestionService } from './question/question.service';
       entities: [
         __dirname + '/**/*.entity{.ts,.js}',
       ],
-      synchronize: true,
+      synchronize: true
     }),
     UsersModule,
     QuestionModule,
@@ -32,4 +32,5 @@ import { QuestionService } from './question/question.service';
   controllers: [AppController],
   providers: [UsersService, QuestionService],
 })
-export class AppModule {}
+
+export class AppModule { }

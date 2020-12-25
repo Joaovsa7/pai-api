@@ -22,7 +22,10 @@ export class User {
   password: string;
 
   @Column({ nullable: true })
-  image: string;
+  profile_image: string;
+
+  @Column({ nullable: true })
+  cover_image: string;
 
   @Column({ nullable: true })
   bio: string;
