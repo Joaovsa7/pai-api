@@ -82,9 +82,9 @@ export class UsersService {
     return !!hasUser
   }
 
-  getByPayload({ username }: any): Promise<User | undefined> {
+  getByPayload({ id }: any): Promise<User | undefined> {
     return this.usersRepository.findOne({
-      where: { username }
+      where: { id }
     });
   }
 
@@ -120,6 +120,7 @@ export class UsersService {
       }
   
       const userData = {
+        ...currentUser,
         ...user,
         id
       }
